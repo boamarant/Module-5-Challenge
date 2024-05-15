@@ -10,6 +10,13 @@
     integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
   <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+    <!-- Linked the DayJS library -->
+    <script
+    src="https://cdn.jsdelivr.net/npm/dayjs@1.11.3/dayjs.min.js"
+    integrity="sha256-iu/zLUB+QgISXBLCW/mcDi/rnf4m4uEDO0wauy76x7U="
+    crossorigin="anonymous"
+  ></script>
 
   <link rel="stylesheet" href="./assets/css/style.css" />
   <title>Task Board</title>
@@ -22,9 +29,47 @@
   </header>
   <div class="container">
     <div class="text-center mb-5">
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal">Add Task</button>
+      <button id="add-task-btn" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#formModal">Add Task</button>
     </div>
     <!-- Todo: Create a modal with a form to add tasks -->
+    <main class="container-fluid">
+      <div class="row">
+        <div class="col-md col-xl-4">
+          <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+            <div class="modal-form">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-light">
+                    <h5 class="h5 card-header modal-title bg='white'">Add Task</h5>
+                  </div>
+                  <div class="modal-body bg-light">
+                    <form id="task-form">
+                      <div class="form-group py-2">
+                        <label for="task-name">Task Name:</label>
+                        <input type="text" class="form-control" id="task-name" name="task-name"></input>
+                      </div>
+                      <div class="form-group py-2">
+                        <label for="datepicker">Due Date:</label>
+                        <input type="text" class="form-control" id="datepicker" name="datepicker"></input>
+                      </div>
+                      <div class="form-group py-2">
+                        <label for="task-desc">Description:</label>
+                        <input type="text" class="form-control" id="task-desc" name="task-desc"></input>
+                      </div>
+                      <div class="modal-footer py-2">
+                        <button type="submit" class="btn btn-custom bg-dark text-light">
+                          Add Project
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
     <div class="row swim-lanes text-center justify-content-between">
       <div class="col-12 col-lg-4 d-flex">
         <div id="to-do" class="card border-light mb-3 lane flex-grow-1">

@@ -11,7 +11,11 @@ const taskFormEl = $('#task-form');
 
 // Todo: create a function to generate a unique task id
 function generateTaskId(){
+  if(nextId === null){
+  nextId = 1;
+  } else {
   nextId++;
+  }
 }
 
 function readTasksFromStorage() {
@@ -54,7 +58,7 @@ function createTaskCard(task) {
 
   cardBody.append(cardDescription, cardDueDate, cardDeleteBtn);
   taskCard.append(cardHeader, cardBody);
-
+  console.log(task.id);
   return taskCard;
 }
 

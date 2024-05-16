@@ -11,17 +11,13 @@ const taskFormEl = $('#task-form');
 
 // Todo: create a function to generate a unique task id
 function generateTaskId(){
-  if(nextId === null){
-  nextId = 1;
-  } else {
-  nextId++;
-  }
+  const id = nextId++;
+  localStorage.setItem('nextId', JSON.stringify(nextId));
+  return id;
 }
 
 function readTasksFromStorage() {
-  if (!taskList) {
-    taskList = [];
-  }
+  taskList = JSON.parse(localStorage.getItem("tasks")) || [];
   return taskList;
 }
 
@@ -31,17 +27,17 @@ function saveTasksToStorage(taskList) {
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
-    const taskCard = $('<div>')
-      .addClass('card task-card draggable my-3')
-      .attr('data-task-id', task.id);
-    const cardHeader = $('<div>').addClass('card-header h4').text(task.taskName);
-    const cardBody = $('<div>').addClass('card-body');
-    const cardDescription = $('<p>').addClass('card-text').text(task.taskDesc);
-    const cardDueDate = $('<p>').addClass('card-text').text(task.dueDate);
-    const cardDeleteBtn = $('<button>')
-      .addClass('btn btn-danger delete')
-      .text('Delete')
-      .attr('data-task-id', task.id);
+  const taskCard = $('<div>')
+    .addClass('card task-card draggable my-3')
+    .attr('data-task-id', task.id);
+  const cardHeader = $('<div>').addClass('card-header h4').text(task.taskName);
+  const cardBody = $('<div>').addClass('card-body');
+  const cardDescription = $('<p>').addClass('card-text').text(task.taskDesc);
+  const cardDueDate = $('<p>').addClass('card-text').text(task.dueDate);
+  const cardDeleteBtn = $('<button>')
+    .addClass('btn btn-danger delete')
+    .text('Delete')
+    .attr('data-task-id', task.id);
   cardDeleteBtn.on('click', handleDeleteTask);
 
   if (task.dueDate && task.status !== 'done') {
@@ -58,7 +54,7 @@ function createTaskCard(task) {
 
   cardBody.append(cardDescription, cardDueDate, cardDeleteBtn);
   taskCard.append(cardHeader, cardBody);
-  console.log(task.id);
+  
   return taskCard;
 }
 
@@ -77,7 +73,13 @@ function renderTaskList() {
       doneList.append(createTaskCard(task));
     }
   });
-  
+
+  $('.draggable').draggable({
+    revert: "invalid",
+    helper: "clone",
+    opacity: 0.7,
+    zIndex: 100
+  });
 
 }
 
@@ -88,6 +90,11 @@ function handleAddTask(event){
     const name = taskNameInput.val().trim();
     const date = dueDateInput.val();
     const desc = taskDescInput.val().trim();
+
+    if (!name || !date || !desc) {
+      alert("Please fill in all fields");
+      return;
+    }
 
     const newTask = {
         taskName: name,
@@ -104,22 +111,23 @@ function handleAddTask(event){
     taskNameInput.val('');
     dueDateInput.val('');
     taskDescInput.val('');
+    $('#formModal').modal('hide');
 }
 
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
   const taskId = $(this).attr('data-task-id');
-  taskList = taskList.filter(task => task.id !== taskId);
+  taskList = taskList.filter(task => task.id != taskId);
   saveTasksToStorage(taskList);
   renderTaskList();
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
-  const taskId = ui.draggable.attr('data-task-id');
+  const taskId = ui.helper.attr('data-task-id');
   const newLocation = event.target.id;
 
-  const taskIndex = taskList.findIndex(task => task.id === taskId);
+  const taskIndex = taskList.findIndex(task => task.id == taskId);
   if (taskIndex !== -1) {
     taskList[taskIndex].status = newLocation;
     saveTasksToStorage(taskList);
@@ -142,20 +150,6 @@ $(document).ready(function () {
         drop: handleDrop,
       });
 
-    $(document).on('mouseover', '.draggable', function(){
-        $(this).draggable({
-            opacity: 0.7,
-            zIndex: 100,
-            helper: function (e) {
-            const original = $(e.target).hasClass('ui-draggable')
-                ? $(e.target)
-                : $(e.target).closest('.ui-draggable');
-            return original.clone().css({
-                width: original.outerWidth(),
-            });
-        },
-    })
-    });
     addTaskBtn.on('click', readTasksFromStorage);
     taskFormEl.on('submit', handleAddTask);
     $(document).on('click', '.delete', handleDeleteTask);

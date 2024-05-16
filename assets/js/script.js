@@ -74,13 +74,6 @@ function renderTaskList() {
     }
   });
 
-  $('.draggable').draggable({ // Makes the cards draggable
-    revert: "invalid",
-    helper: "clone",
-    opacity: 0.7,
-    zIndex: 100
-  });
-
 }
 
 // Todo: create a function to handle adding a new task
@@ -149,6 +142,21 @@ $(document).ready(function () {
         accept: '.draggable',
         drop: handleDrop,
       });
+
+    $(document).on('mouseover', '.draggable', function(){ // Makes the cards draggable
+      $(this).draggable({
+          opacity: 0.7,
+          zIndex: 100,
+          helper: function (e) {
+          const original = $(e.target).hasClass('ui-draggable')
+              ? $(e.target)
+              : $(e.target).closest('.ui-draggable');
+          return original.clone().css({
+              width: original.outerWidth(),
+          });
+        },
+    })
+    });
 
     addTaskBtn.on('click', readTasksFromStorage); // Event listeners for button functionality
     taskFormEl.on('submit', handleAddTask);
